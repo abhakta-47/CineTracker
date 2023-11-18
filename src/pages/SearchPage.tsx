@@ -9,18 +9,12 @@ interface SearchPageParams {
   [key: string]: string | undefined;
 }
 
-const SearchPage: React.FC = () => {
+const SearchPage: React.FC<any> = ({ searchResults, setSearchResults }) => {
   const { key } = useParams<SearchPageParams>();
   const [searchQuery, setSearchQuery] = useState<string>(key || '');
-  const [searchResults, setSearchResults] = useState<MediaSearchResult[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-
-    const fetchData = async () => {
-      const results = await SearchMedia(searchQuery);
-      setSearchResults(results);
-    };
 
     const delayDebounceFn = setTimeout(() => {
       // Send Axios request here
@@ -51,22 +45,8 @@ const SearchPage: React.FC = () => {
     }
   };
 
-
   return (
-    <div>
-      <h2>Search Page</h2>
-      <div className="mb-4">
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="p-2 border rounded-md"
-          onKeyUp={handleKeyPress}
-        />
-        <button onClick={handleSearch} className="ml-2 bg-blue-500 text-white p-2 rounded-md">
-          Search
-        </button>
-      </div>
+    <div className='flex items-center justify-center'>
       {key && <p>Search keyword: {key}</p>}
       <TileGrid
         searchResults={searchResults}
