@@ -43,7 +43,7 @@ const SearchMedia = async (key: string) => {
     const omdbApiKey = process.env.REACT_APP_OMDB_API_KEY;
     let searchResults: MediaSearchResult[] = [];
     try {
-        const response = await axios.get(`http://www.omdbapi.com/?apikey=${omdbApiKey}&s=${key}`);
+        const response = await axios.get(`https://www.omdbapi.com/?apikey=${omdbApiKey}&s=${key}`);
         if (response.data["Response"] === "False")
             return searchResults;
         searchResults = response.data["Search"].map((item: any) => {
@@ -59,7 +59,7 @@ const MediaDetails = async (imdbID: string) => {
     const omdbApiKey = process.env.REACT_APP_OMDB_API_KEY;
     let mediaMetaData: OMDBMedia | null = null; // Initialize with null
     try {
-        const response = await axios.get(`http://www.omdbapi.com/?apikey=${omdbApiKey}&i=${imdbID}`);
+        const response = await axios.get(`https://www.omdbapi.com/?apikey=${omdbApiKey}&i=${imdbID}`);
         mediaMetaData = response.data;
     } catch (error) {
         console.error('Error fetching search results:', error);
