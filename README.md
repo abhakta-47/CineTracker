@@ -2,13 +2,23 @@
 
 A Movie List App is a web application built with ReactJS (NextJS) and TypeScript. It allows users to search for movies, view details, and manage their watchlist and watched list. The app integrates with Google Drive to save and retrieve watchlists.
 
+## Build status
+[![Netlify Status](https://api.netlify.com/api/v1/badges/c6059543-cfcb-46a1-a4fb-e77031491b29/deploy-status)](https://app.netlify.com/sites/aesthetic-maamoul-645af6/deploys)
+
 ## Developement Progress
-- [ ] Search page
-    - [ ] search page 
-    - [ ] movie tiles
-- [ ] Details Page
-- [ ] Store
+- [x] Search page
+    - [x] search page 
+    - [x] movie tiles
+    - [ ] pagination
 - [ ] GDrive api
+   - [ ] get GDrive API keys and basic flow
+      - [ ] login with google, permissions page
+      - [ ] save token and all
+   - [ ] add to watch list
+   - [ ] add to watched list
+   - [ ] persist state
+- [ ] Details Page
+- [ ] Store (not needed)
 
 ## Table of Contents
 
@@ -81,22 +91,6 @@ A Movie List App is a web application built with ReactJS (NextJS) and TypeScript
 - **Environment Variables:**
   - `REACT_APP_GOOGLE_CLIENT_ID`: Google API client ID.
   - `REACT_APP_MOVIE_DB_API_KEY`: TMDb API key.
-
-## Folder Structure
-
-```
-movie-list-app/
-|-- src/
-|   |-- components/
-|   |-- pages/
-|   |-- services/
-|   |-- styles/
-|-- .env
-|-- .gitignore
-|-- package.json
-|-- README.md
-|-- ... (other project files)
-```
 
 ## Contributing
 
