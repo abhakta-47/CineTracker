@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { SearchMedia, MediaDetails, MediaSearchResult } from '../utils/omdbApi';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
-interface SearchBoxProps {
-    searchKey: string;
-    callbackFunction: (results: MediaSearchResult[]) => void;
-}
 
-const SearchBox: React.FC<SearchBoxProps> = ({ searchKey, callbackFunction }) => {
+const SearchBox = () => {
 
-    const [searchQuery, setSearchQuery] = useState<string>(searchKey || "")
+    const [searchQuery, setSearchQuery] = useState<string>("")
+    const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
 
-    const fetchData = async () => {
-        const results = await SearchMedia(searchQuery);
-        callbackFunction(results);
-    };
+    useEffect(() => {
+        const key = searchParams.get('key') || '';
+        setSearchQuery(key);
+    }, [searchParams]);
 
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
             if (searchQuery.trim().length >= 3) {
-                fetchData();
+                navigate(`/search?key=${searchQuery}`);
+
             }
         }, 2000)
 
@@ -28,7 +27,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ searchKey, callbackFunction }) =>
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && searchQuery.trim().length >= 3) {
-            fetchData();
+            navigate(`/search?key=${searchQuery}`);
         }
     };
 

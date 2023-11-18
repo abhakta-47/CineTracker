@@ -52,6 +52,8 @@ const SearchMedia = async (key: string) => {
     let searchResults: MediaSearchResult[] = [];
     try {
         const response = await axios.get(`http://www.omdbapi.com/?apikey=${omdbApiKey}&s=${key}`);
+        if (response.data["Response"] === "False")
+            return searchResults;
         searchResults = response.data["Search"].map((item: any) => {
             return { "id": item["imdbID"], "type": "omdb" }
         });
