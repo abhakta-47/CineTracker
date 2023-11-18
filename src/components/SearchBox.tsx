@@ -6,7 +6,7 @@ const SearchBox = () => {
 
     const [searchQuery, setSearchQuery] = useState<string>("")
     const navigate = useNavigate();
-    const [searchParams, setSearchParams] = useSearchParams();
+    const [searchParams,] = useSearchParams();
 
     useEffect(() => {
         const key = searchParams.get('key') || '';
@@ -23,7 +23,7 @@ const SearchBox = () => {
 
         return () => clearTimeout(delayDebounceFn)
 
-    }, [searchQuery]);
+    }, [searchQuery, navigate]);
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && searchQuery.trim().length >= 3) {

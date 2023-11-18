@@ -1,8 +1,8 @@
 // src/components/TileGrid.tsx
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Tile from './Tile';
 import { MediaSearchResult } from '../utils/omdbApi';
-import { on } from 'events';
+
 
 interface TileGridProps {
     searchResults: MediaSearchResult[];

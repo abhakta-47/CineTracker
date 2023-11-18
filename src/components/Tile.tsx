@@ -1,6 +1,5 @@
 // src/components/Tile.tsx
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 
 import { MediaSearchResult, OMDBMedia, MediaDetails } from "../utils/omdbApi"
 
@@ -21,7 +20,7 @@ const Tile: React.FC<TileProps> = ({ searchResult, onAddToWatchList, onAddToWatc
         };
 
         fetchData()
-    }, []);
+    }, [searchResult]);
 
     return (
         <>

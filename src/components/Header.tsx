@@ -1,6 +1,5 @@
 import React from 'react';
 import SearchBox from '../components/SearchBox';
-import { MediaSearchResult } from '../utils/omdbApi';
 
 
 const Header = () => {

@@ -1,13 +1,5 @@
 import axios from 'axios';
 
-interface Media {
-    imdbID: string;
-    Title: string;
-    Poster: string;
-    Type: string;
-    Year: string;
-}
-
 interface MediaSearchResult {
     id: string;
     type: "omdb" | "anime";
