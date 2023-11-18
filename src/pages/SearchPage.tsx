@@ -16,14 +16,21 @@ const SearchPage: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+
     const fetchData = async () => {
       const results = await SearchMedia(searchQuery);
       setSearchResults(results);
     };
 
-    if (searchQuery.trim().length >= 3) {
-      fetchData();
-    }
+    const delayDebounceFn = setTimeout(() => {
+      // Send Axios request here
+      if (searchQuery.trim().length >= 3) {
+        fetchData();
+      }
+    }, 2000)
+
+    return () => clearTimeout(delayDebounceFn)
+
   }, [searchQuery]);
 
   const handleSearch = () => {
@@ -54,7 +61,7 @@ const SearchPage: React.FC = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="p-2 border rounded-md"
-          onKeyPress={handleKeyPress}
+          onKeyUp={handleKeyPress}
         />
         <button onClick={handleSearch} className="ml-2 bg-blue-500 text-white p-2 rounded-md">
           Search
