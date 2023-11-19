@@ -10,7 +10,7 @@ import Header from './components/Header';
 const App: React.FC = () => {
 
   return (
-    <>
+    <div className='bg-custom-black min-h-screen text-white'>
       <Router>
         <Header />
         <Routes>
@@ -19,7 +19,7 @@ const App: React.FC = () => {
           <Route path="/item/:id" element={<MovieDetailsPage />} />
         </Routes>
       </Router>
-    </>
+    </div>
   );
 };
 

@@ -5,35 +5,39 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 const SearchBox = () => {
 
     const [searchQuery, setSearchQuery] = useState<string>("")
+    const [currentPage, setCurrentPage] = useState<number>(1);
+
     const navigate = useNavigate();
     const [searchParams,] = useSearchParams();
 
     useEffect(() => {
         const key = searchParams.get('key') || '';
         setSearchQuery(key);
+        setCurrentPage(searchParams.get('page') ? parseInt(searchParams.get('page') as string) : 1);
+
     }, [searchParams]);
 
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
             if (searchQuery.trim().length >= 3) {
-                navigate(`/search?key=${searchQuery}`);
+                navigate(`/search?key=${searchQuery}&page=${currentPage}`);
 
             }
         }, 2000)
 
         return () => clearTimeout(delayDebounceFn)
 
-    }, [searchQuery, navigate]);
+    }, [searchQuery, currentPage, navigate]);
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter' && searchQuery.trim().length >= 3) {
-            navigate(`/search?key=${searchQuery}`);
+            navigate(`/search?key=${searchQuery}&page=1`);
         }
     };
 
     return (
-        <div className="flex items-center rounded overflow-hidden">
-            <div className="p-2 bg-white">
+        <div className="flex items-center rounded-md overflow-hidden" style={{ background: "#192026" }}>
+            <div className="p-2 text-white">
                 {/* Search icon */}
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -53,13 +57,13 @@ const SearchBox = () => {
             <input
                 type="text"
                 placeholder="Search..."
-                className="p-2 focus:outline-none"
+                className="p-2 focus:outline-none text-white w-80"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyUp={handleKeyPress}
-
+                style={{ background: "#192026" }}
             />
-            <button className="bg-blue-500 text-white p-2 ">
+            <button className="text-white p-2 font-bold" style={{ background: "#1db2f3", color: "#0f1317" }}>
                 {/* Search button */}
                 Search
             </button>
