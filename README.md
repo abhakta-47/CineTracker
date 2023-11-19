@@ -9,7 +9,8 @@ A Movie List App is a web application built with ReactJS (NextJS) and TypeScript
 - [x] Search page
     - [x] search page 
     - [x] movie tiles
-    - [ ] pagination
+    - [x] pagination
+- [x] UI revamp
 - [ ] GDrive api
    - [ ] get GDrive API keys and basic flow
       - [ ] login with google, permissions page
