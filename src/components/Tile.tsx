@@ -3,6 +3,14 @@ import React, { useState, useEffect } from 'react';
 
 import { MediaSearchResult, OMDBMedia, MediaDetails } from "../utils/omdbApi"
 
+const TileLoader = () => {
+    return (
+        <div className="bg-gray-200 p-4 rounded-md shadow-md animate-pulse" style={{ height: "444px", width: "300px" }}>
+            {/* Card content goes here */}
+        </div>
+    );
+};
+
 interface TileProps {
     searchResult: MediaSearchResult;
     onAddToWatchList: () => void;
@@ -50,7 +58,7 @@ const Tile: React.FC<TileProps> = ({ searchResult, onAddToWatchList, onAddToWatc
                     </div>
                 </ div>
             ) : (
-                <p>Loading...</p>
+                <TileLoader />
             )}
         </>
     );

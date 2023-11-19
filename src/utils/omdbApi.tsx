@@ -5,6 +5,11 @@ interface MediaSearchResult {
     type: "omdb" | "anime";
 }
 
+interface MediaSearchResults {
+    results: MediaSearchResult[];
+    totalResults: number;
+}
+
 interface Rating {
     Source: string;
     Value: string;
@@ -39,14 +44,15 @@ interface OMDBMedia {
 }
 
 
-const SearchMedia = async (key: string) => {
+const SearchMedia = async (key: string, page: number) => {
     const omdbApiKey = process.env.REACT_APP_OMDB_API_KEY;
-    let searchResults: MediaSearchResult[] = [];
+    let searchResults: MediaSearchResults = { results: [], totalResults: 0 };
     try {
-        const response = await axios.get(`https://www.omdbapi.com/?apikey=${omdbApiKey}&s=${key}`);
+        const response = await axios.get(`https://www.omdbapi.com/?apikey=${omdbApiKey}&s=${key}&page=${page}`);
         if (response.data["Response"] === "False")
             return searchResults;
-        searchResults = response.data["Search"].map((item: any) => {
+        searchResults["totalResults"] = response.data["totalResults"];
+        searchResults["results"] = response.data["Search"].map((item: any) => {
             return { "id": item["imdbID"], "type": "omdb" }
         });
     } catch (error) {
@@ -68,5 +74,5 @@ const MediaDetails = async (imdbID: string) => {
 };
 
 
-export type { MediaSearchResult, OMDBMedia };
+export type { MediaSearchResult, OMDBMedia, MediaSearchResults };
 export { SearchMedia, MediaDetails };
