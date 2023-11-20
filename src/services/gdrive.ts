@@ -19,9 +19,10 @@ class GDriveService {
   private DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
   private SCOPES = 'https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file';
   private tokenClient: any;
+  public isLoggedIn: boolean = false;
 
   constructor() {
-    console.log('gdrive service init');
+    console.log('gdrive service constructor');
 
     window.gapi.load('client', async () => {
       await window.gapi.client.init({
@@ -29,14 +30,14 @@ class GDriveService {
         discoveryDocs: [this.DISCOVERY_DOC],
       });
     });
+    console.log('gapi loaded');
 
     this.tokenClient = window.google.accounts.oauth2.initTokenClient({
       client_id: this.CLIENT_ID,
       scope: this.SCOPES,
       callback: '',
     });
-
-    this.authLogin();
+    console.log('gsi loaded');
   }
 
   private async createJSON(fileName: string, jsonObject: ListItem, parentFolder: string): Promise<string> {
@@ -75,8 +76,11 @@ class GDriveService {
     }
   }
 
-  public async listFilesDir(): Promise<string[] | null> {
+  public async listFilesDir(): Promise<{ id: string, name: string }[] | null> {
     let response;
+    if (!window.gapi.client.drive) {
+      this.authLogin();
+    }
     try {
       let service: any = window.gapi.client.drive;
       response = await service.files.list({
@@ -84,8 +88,9 @@ class GDriveService {
         fields: 'nextPageToken, files(id, name)',
         pageSize: 100,
       });
+      // console.log(response);
       // TODO return only list of ids
-      return response.data.files;
+      return response.result.files;
     } catch (err: any) {
       console.error('listfile error', err.message);
       throw new Error(`Error listing files: ${err.message}`);
@@ -124,12 +129,20 @@ class GDriveService {
     return await this.createJSON(imdbID, jsonObject, 'watched-list');
   }
 
-  public authLogin() {
+  private triggerAuthCompleteEvent() {
+    // Create and dispatch a custom event
+    const authCompleteEvent = new Event('authComplete');
+    document.dispatchEvent(authCompleteEvent);
+  }
+
+  public authLogin = async () => {
     this.tokenClient.callback = async (resp: any) => {
       if (resp.error !== undefined) {
         throw new Error(`Authentication error: ${resp.error}`);
       }
       console.log('token', resp.access_token);
+      this.isLoggedIn = true;
+      this.triggerAuthCompleteEvent();
     };
 
     if (window.gapi.client.getToken() === null) {
@@ -137,7 +150,7 @@ class GDriveService {
     } else {
       this.tokenClient.requestAccessToken({ prompt: '' });
     }
-  }
+  };
 }
 
 const gDriveService = new GDriveService();

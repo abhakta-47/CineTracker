@@ -18,6 +18,7 @@ A Movie List App is a web application built with ReactJS (NextJS) and TypeScript
    - [ ] add to watch list
    - [ ] add to watched list
    - [ ] persist state
+   - [ ] conflict resolution by time ( some id in both watched towatch keep the newer)
 - [ ] Details Page
 - [ ] Store (not needed)
 
