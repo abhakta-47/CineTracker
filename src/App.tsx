@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 import watchListService from './services/storage';
-import gDriveService from './services/gdrive';
 
 import SearchPage from './pages/SearchPage';
 import MovieDetailsPage from './pages/MovieDetailsPage';
@@ -53,13 +52,11 @@ const App: React.FC = () => {
 
   document.addEventListener('authComplete', () => {
     watchListService.postAuth();
-
   });
 
 
   return (
     <div className='bg-custom-black min-h-screen text-white'>
-      <button onClick={gDriveService.authLogin}>test</button>
       <Router>
         <Header />
         <Routes>

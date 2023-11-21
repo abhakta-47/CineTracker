@@ -8,6 +8,9 @@ declare global {
     }
 }
 
+// let gDriveService: any;
+// window.onload = () => { gDriveService = new GDriveService() };
+
 class WatchListService {
     private watchListData: WatchListData = {
         toWatch: [],
@@ -21,6 +24,8 @@ class WatchListService {
     }
 
     public async postAuth() {
+        if (!gDriveService) return;
+        if (!gDriveService.isLoggedIn) return;
         this.syncDriveFiles();
     }
 
@@ -75,7 +80,7 @@ class WatchListService {
 
         const driveFiles = await gDriveService.listFilesDir();
         if (!driveFiles) return;
-        driveFiles.forEach((item) => {
+        driveFiles.forEach((item: any) => {
             const { id, name } = item;
             const startIndex = name.indexOf('_') + 1;
             const endIndex = name.indexOf('.json');

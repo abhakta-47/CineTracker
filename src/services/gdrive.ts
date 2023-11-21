@@ -23,22 +23,64 @@ class GDriveService {
 
   constructor() {
     console.log('gdrive service constructor');
-
-    window.gapi.load('client', async () => {
-      await window.gapi.client.init({
-        apiKey: this.API_KEY,
-        discoveryDocs: [this.DISCOVERY_DOC],
-      });
-    });
-    console.log('gapi loaded');
-
-    this.tokenClient = window.google.accounts.oauth2.initTokenClient({
-      client_id: this.CLIENT_ID,
-      scope: this.SCOPES,
-      callback: '',
-    });
-    console.log('gsi loaded');
+    window.onload = () => this.init();
   }
+
+  private async init() {
+    try {
+      window.gapi.load('client', async () => {
+        await window.gapi.client.init({
+          apiKey: this.API_KEY,
+          discoveryDocs: [this.DISCOVERY_DOC],
+        });
+
+        this.tokenClient = await window.google.accounts.oauth2.initTokenClient({
+          client_id: this.CLIENT_ID,
+          scope: this.SCOPES,
+          callback: '',
+          // access
+        });
+        console.log('gsi loaded');
+
+        const storedToken = await localStorage.getItem('accessToken');
+        if (storedToken) {
+          await window.gapi.client.setToken({ access_token: storedToken });
+          this.isLoggedIn = true;
+          this.triggerAuthCompleteEvent();
+          console.log('token set from local storage');
+        }
+
+        console.log('gapi loaded');
+
+        console.log('gapi loaded event');
+        const gapiLoaded = new Event('gapiLoaded');
+        document.dispatchEvent(gapiLoaded);
+      });
+
+    }
+    catch (err) {
+      console.log(err);
+    }
+
+  }
+
+  public authLogin = async () => {
+    this.tokenClient.callback = async (resp: any) => {
+      if (resp.error !== undefined) {
+        throw new Error(`Authentication error: ${resp.error}`);
+      }
+      console.log('token', resp.access_token);
+      this.isLoggedIn = true;
+      localStorage.setItem('accessToken', resp.access_token);
+      this.triggerAuthCompleteEvent();
+    };
+
+    if (window.gapi.client.getToken() === null) {
+      this.tokenClient.requestAccessToken({ prompt: 'consent' });
+    } else {
+      this.tokenClient.requestAccessToken({ prompt: '' });
+    }
+  };
 
   private async createJSON(fileName: string, jsonObject: ListItem, parentFolder: string): Promise<string> {
     const fileMetadata = {
@@ -135,25 +177,10 @@ class GDriveService {
     const authCompleteEvent = new Event('authComplete');
     document.dispatchEvent(authCompleteEvent);
   }
-
-  public authLogin = async () => {
-    this.tokenClient.callback = async (resp: any) => {
-      if (resp.error !== undefined) {
-        throw new Error(`Authentication error: ${resp.error}`);
-      }
-      console.log('token', resp.access_token);
-      this.isLoggedIn = true;
-      this.triggerAuthCompleteEvent();
-    };
-
-    if (window.gapi.client.getToken() === null) {
-      this.tokenClient.requestAccessToken({ prompt: 'consent' });
-    } else {
-      this.tokenClient.requestAccessToken({ prompt: '' });
-    }
-  };
 }
 
-const gDriveService = new GDriveService();
+// let gDriveService: GDriveService = new GDriveService();
+let gDriveService = new GDriveService();
 
 export default gDriveService;
+// export default GDriveService;
