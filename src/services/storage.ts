@@ -1,12 +1,12 @@
 import gDriveService from './gdrive'; // Your Google Drive service file
 
-interface WatchListData {
-    toWatch: string[]; // Array of IMDb IDs in to-watch list
-    watched: string[]; // Array of IMDb IDs in watched list
-    driveMapping: { [key: string]: string }; // Index signature for driveMapping
+declare global {
+    interface WatchListData {
+        toWatch: string[]; // Array of IMDb IDs in to-watch list
+        watched: string[]; // Array of IMDb IDs in watched list
+        driveMapping: { [key: string]: string }; // Index signature for driveMapping
+    }
 }
-
-const delay = (ms: any) => new Promise(res => setTimeout(res, ms));
 
 class WatchListService {
     private watchListData: WatchListData = {
@@ -35,6 +35,11 @@ class WatchListService {
 
     private setDriveFileId(imdbID: string, driveId: string) {
         this.watchListData.driveMapping[imdbID] = driveId;
+        this.save();
+    }
+
+    private unsetDriveFileId(imdbID: string) {
+        delete this.watchListData.driveMapping[imdbID];
         this.save();
     }
 
@@ -93,6 +98,8 @@ class WatchListService {
 
         this.watchListData = newData;
         this.save()
+
+        console.log('synced with drive');
     }
 
     public addToWatchList(id: string) {
@@ -122,17 +129,23 @@ class WatchListService {
     }
 
     public removeToWatchList(id: string) {
+        if (!this.watchListData.toWatch.includes(id)) return;
         this.watchListData.toWatch = this.watchListData.toWatch.filter((item) => item !== id);
-        this.save();
-        if (gDriveService.isLoggedIn)
+        if (gDriveService.isLoggedIn) {
             gDriveService.deleteFile(this.getDriveFileId(id));
+            this.unsetDriveFileId(id);
+        }
+        this.save();
     }
 
     public removeWatchedList(id: string) {
+        if (!this.watchListData.watched.includes(id)) return;
         this.watchListData.watched = this.watchListData.watched.filter((item) => item !== id);
-        this.save();
-        if (gDriveService.isLoggedIn)
+        if (gDriveService.isLoggedIn) {
             gDriveService.deleteFile(this.getDriveFileId(id));
+            this.unsetDriveFileId(id);
+        }
+        this.save();
     }
 
     public getWatchLists(): WatchListData {
@@ -148,4 +161,3 @@ class WatchListService {
 
 const watchListService = new WatchListService();
 export default watchListService;
-export type { WatchListData };

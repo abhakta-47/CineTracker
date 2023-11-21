@@ -1,13 +1,15 @@
 // src/App.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
-import watchListService, { WatchListData } from './services/storage';
+import watchListService from './services/storage';
 import gDriveService from './services/gdrive';
 
 import SearchPage from './pages/SearchPage';
 import MovieDetailsPage from './pages/MovieDetailsPage';
 import Header from './components/Header';
+import ToWatchPage from './pages/ToWatch';
+import WatchedPage from './pages/Watched';
 
 declare global {
   interface WatchListActions {
@@ -19,7 +21,14 @@ declare global {
 }
 
 const App: React.FC = () => {
-  const [watchListData, setWatchListData] = useState<WatchListData>();
+  const [watchListData, setWatchListData] = useState<WatchListData>(watchListService.getWatchLists());
+  const [toWatchList, setToWatchList] = useState<MediaSearchResult[]>([]);
+  const [watchedList, setWatchedList] = useState<MediaSearchResult[]>([]);
+
+  useEffect(() => {
+    setToWatchList(watchListData.toWatch.map(obj => { return { 'id': obj, 'type': "omdb" } }));
+    setWatchedList(watchListData.watched.map(obj => { return { 'id': obj, 'type': "omdb" } }));
+  }, [watchListData]);
 
 
   const watchListActions: WatchListActions = {
@@ -54,9 +63,11 @@ const App: React.FC = () => {
       <Router>
         <Header />
         <Routes>
-          <Route path="/" element={<SearchPage watchListActions={watchListActions} />} />
-          <Route path="/search" element={<SearchPage watchListActions={watchListActions} />} />
+          <Route path="/" element={<SearchPage watchListActions={watchListActions} setWatchListData={setWatchListData} />} />
+          <Route path="/search" element={<SearchPage watchListActions={watchListActions} setWatchListData={setWatchListData} />} />
           <Route path="/item/:id" element={<MovieDetailsPage />} />
+          <Route path="/towatch" element={<ToWatchPage toWatchList={toWatchList} watchListActions={watchListActions} setWatchListData={setWatchListData} />} />
+          <Route path="/watched" element={<WatchedPage watchedList={watchedList} watchListActions={watchListActions} setWatchListData={setWatchListData} />} />
         </Routes>
       </Router>
     </div>

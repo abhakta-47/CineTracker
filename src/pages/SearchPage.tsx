@@ -5,15 +5,16 @@ import TileGrid from '../components/TileGrid';
 import Pagination from '../components/Pagination';
 import SpinningLoader from '../components/SpinningLoader';
 
-import { SearchMedia, MediaSearchResult, MediaSearchResults } from '../utils/omdbApi';
+import { SearchMedia, MediaSearchResults } from '../utils/omdbApi';
 
 const ITEMS_PER_PAGE = 10; // Adjust this based on your requirements
 
 interface SearchPageProps {
   watchListActions: WatchListActions;
+  setWatchListData: React.Dispatch<React.SetStateAction<WatchListData>>;
 }
 
-const SearchPage: React.FC<SearchPageProps> = ({ watchListActions: watchListActions }) => {
+const SearchPage: React.FC<SearchPageProps> = ({ watchListActions, setWatchListData }) => {
   const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchResults, setSearchResults] = useState<MediaSearchResult[]>([]);
@@ -64,7 +65,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ watchListActions: watchListActi
       );
 
     return (<>
-      <TileGrid searchResults={searchResults} watchListActions={watchListActions} />
+      <TileGrid searchResults={searchResults} watchListActions={watchListActions} setWatchListData={setWatchListData} />
       <Pagination
         totalPages={Math.ceil(totalResults / ITEMS_PER_PAGE)}
         currentPage={currentPage}
