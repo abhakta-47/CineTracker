@@ -25,6 +25,10 @@ const App: React.FC = () => {
   const [watchedList, setWatchedList] = useState<MediaSearchResult[]>([]);
 
   useEffect(() => {
+    watchListService.updateState = setWatchListData;
+  }, []);
+
+  useEffect(() => {
     setToWatchList(watchListData.toWatch.map(obj => { return { 'id': obj, 'type': "omdb" } }));
     setWatchedList(watchListData.watched.map(obj => { return { 'id': obj, 'type': "omdb" } }));
   }, [watchListData]);
@@ -49,10 +53,7 @@ const App: React.FC = () => {
     },
   };
 
-
-  document.addEventListener('authEvent', () => {
-    watchListService.postAuth();
-  });
+  document.addEventListener('authEvent', () => watchListService.postAuth());
 
 
   return (
