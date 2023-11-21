@@ -24,7 +24,7 @@ A Movie List App is a web application built with ReactJS (NextJS) and TypeScript
    - [x] AC (login, logout) component
    - [ ] refresh token prompt
    - [ ] explain why user have to login again and again
-- watched, towatch state,storage,drive,sync bugs fix
+- [x] watched, towatch state,storage,drive,sync bugs fix
 - [ ] Details Page
 - &#x2612; Store (not needed)
 

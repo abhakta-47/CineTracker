@@ -35,6 +35,7 @@ class WatchListService {
     }
 
     private save() {
+        console.log('storage save');
         localStorage.setItem('watchListData', JSON.stringify(this.watchListData));
     }
 
@@ -50,24 +51,6 @@ class WatchListService {
 
     private getDriveFileId(imdbID: string) {
         return this.watchListData.driveMapping[imdbID];
-    }
-
-    private _addToWatchList(id: string) {
-        if (this.watchListData.watched.includes(id))
-            this.removeWatchedList(id);
-        if (!this.watchListData.toWatch.includes(id)) {
-            this.watchListData.toWatch.push(id);
-            this.save();
-        }
-    }
-
-    private _addWatchedList(id: string) {
-        if (this.watchListData.toWatch.includes(id))
-            this.removeToWatchList(id);
-        if (!this.watchListData.watched.includes(id)) {
-            this.watchListData.watched.push(id);
-            this.save();
-        }
     }
 
     public async syncDriveFiles() {
@@ -154,7 +137,8 @@ class WatchListService {
     }
 
     public getWatchLists(): WatchListData {
-        return this.watchListData;
+        console.log('getWatchLists');
+        return { ...this.watchListData };
     }
 
     // public async listFilesDir(folderId: string) {
