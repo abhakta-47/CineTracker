@@ -1,7 +1,10 @@
 // src/components/Tile.tsx
 import React, { useState, useEffect } from 'react';
+import { Tooltip } from 'react-tooltip';
 
-import { MediaSearchResult, OMDBMedia, MediaDetails } from "../utils/omdbApi"
+import { OMDBMedia, MediaDetails } from "../utils/omdbApi"
+import watchListService from '../services/storage';
+
 
 const TileLoader = () => {
     return (
@@ -13,11 +16,14 @@ const TileLoader = () => {
 
 interface TileProps {
     searchResult: MediaSearchResult;
-    onAddToWatchList: () => void;
-    onAddToWatchedList: () => void;
+    addToWatchList: (id: string) => void;
+    addWatchedList: (id: string) => void;
+    removeToWatchList: (id: string) => void;
+    removeWatchedList: (id: string) => void;
+    setWatchListData: React.Dispatch<React.SetStateAction<WatchListData>>;
 }
 
-const Tile: React.FC<TileProps> = ({ searchResult, onAddToWatchList, onAddToWatchedList }) => {
+const Tile: React.FC<TileProps> = ({ searchResult, addToWatchList, addWatchedList, removeToWatchList, removeWatchedList, setWatchListData }) => {
     const [media, setMedia] = useState<OMDBMedia | undefined>();
 
     useEffect(() => {
@@ -27,8 +33,32 @@ const Tile: React.FC<TileProps> = ({ searchResult, onAddToWatchList, onAddToWatc
                 setMedia(result);
         };
 
-        fetchData()
+        fetchData();
     }, [searchResult]);
+
+    const handleAddToWatch = (e: React.MouseEvent<HTMLButtonElement>) => {
+        // e.preventDefault();
+        console.log("add to watchlist");
+        removeWatchedList(searchResult.id);
+        addToWatchList(searchResult.id);
+        setWatchListData(watchListService.getWatchLists());
+    };
+    const handleAddWatched = (e: React.MouseEvent<HTMLButtonElement>) => {
+        // e.preventDefault();
+        console.log("add to watchedlist");
+        removeToWatchList(searchResult.id);
+        addWatchedList(searchResult.id);
+        setWatchListData(watchListService.getWatchLists());
+    };
+    const handleRemove = (e: React.MouseEvent<HTMLButtonElement>) => {
+        // e.preventDefault();
+        const path = window.location.pathname;
+        if ('/watched' === path)
+            removeWatchedList(searchResult.id);
+        else
+            removeToWatchList(searchResult.id);
+        setWatchListData(watchListService.getWatchLists());
+    };
 
     return (
         <>
@@ -44,17 +74,35 @@ const Tile: React.FC<TileProps> = ({ searchResult, onAddToWatchList, onAddToWatc
                         {/* <p className="text-white mb-2">{media["Plot"]}</p> */}
                         <p className="text-white mb-2">Rating: {media["imdbRating"]}</p>
 
-                        {/* <div className="flex space-x-2">
-                            <Link to={`/item/omdb/${media["imdbID"]}`} className="bg-blue-500 text-white px-4 py-2 rounded-md">
-                                View Details
-                            </Link>
-                            <button onClick={onAddToWatchList} className="bg-green-500 text-white px-4 py-2 rounded-md">
-                                Add to Watchlist
+
+                        <div className="flex justify-around space-x-2">
+                            <button
+                                data-tooltip-id={`my-tooltip-${media["imdbID"]}`}
+                                data-tooltip-content="Add to Watch list"
+                                onClick={handleAddToWatch}
+                                className="bg-green-500 text-white px-4 py-2 rounded-md z-10"
+                            >
+                                <i className="nf nf-md-eye_plus"></i>
                             </button>
-                            <button onClick={onAddToWatchedList} className="bg-indigo-500 text-white px-4 py-2 rounded-md">
-                                Add to Watched List
+                            <button
+                                data-tooltip-id={`my-tooltip-${media["imdbID"]}`}
+                                data-tooltip-content="mark already Watched"
+                                onClick={handleAddWatched}
+                                className="bg-indigo-500 text-white px-4 py-2 rounded-md z-10"
+                            >
+                                <i className="nf nf-md-eye_check"></i>
                             </button>
-                        </div> */}
+                            <button
+                                data-tooltip-id={`my-tooltip-${media["imdbID"]}`}
+                                data-tooltip-content="delete from list"
+                                onClick={handleRemove}
+                                className="bg-red-500 text-white px-4 py-2 rounded-md z-10"
+                            >
+                                <i className="nf nf-fa-trash"></i>
+                            </button>
+                            <Tooltip id={`my-tooltip-${media["imdbID"]}`} />
+                        </div>
+
                     </div>
                 </ div>
             ) : (

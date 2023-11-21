@@ -1,10 +1,11 @@
 import axios from 'axios';
 
-interface MediaSearchResult {
-    id: string;
-    type: "omdb" | "anime";
+declare global {
+    interface MediaSearchResult {
+        id: string;
+        type: "omdb" | "anime";
+    }
 }
-
 interface MediaSearchResults {
     results: MediaSearchResult[];
     totalResults: number;
@@ -74,5 +75,5 @@ const MediaDetails = async (imdbID: string) => {
 };
 
 
-export type { MediaSearchResult, OMDBMedia, MediaSearchResults };
+export type { OMDBMedia, MediaSearchResults };
 export { SearchMedia, MediaDetails };
