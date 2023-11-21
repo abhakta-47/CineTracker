@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from 'react';
 import gDriveService from './gdrive'; // Your Google Drive service file
 
 declare global {
@@ -18,6 +19,8 @@ class WatchListService {
         driveMapping: {}
     };
 
+    public updateState: Dispatch<SetStateAction<WatchListData>> | null = null;
+
     constructor() {
         console.log('watchlist service constructor');
         this.watchListData = this.loadWatchListData();
@@ -37,6 +40,8 @@ class WatchListService {
     private save() {
         console.log('storage save');
         localStorage.setItem('watchListData', JSON.stringify(this.watchListData));
+        if (this.updateState)
+            this.updateState({ ...this.watchListData });
     }
 
     private setDriveFileId(imdbID: string, driveId: string) {
