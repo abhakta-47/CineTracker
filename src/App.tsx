@@ -50,7 +50,7 @@ const App: React.FC = () => {
   };
 
 
-  document.addEventListener('authComplete', () => {
+  document.addEventListener('authEvent', () => {
     watchListService.postAuth();
   });
 
@@ -60,11 +60,11 @@ const App: React.FC = () => {
       <Router>
         <Header />
         <Routes>
-          <Route path="/" element={<SearchPage watchListActions={watchListActions} setWatchListData={setWatchListData} />} />
-          <Route path="/search" element={<SearchPage watchListActions={watchListActions} setWatchListData={setWatchListData} />} />
+          <Route path="/" element={<SearchPage watchListActions={watchListActions} />} />
+          <Route path="/search" element={<SearchPage watchListActions={watchListActions} />} />
           <Route path="/item/:id" element={<MovieDetailsPage />} />
-          <Route path="/towatch" element={<ToWatchPage toWatchList={toWatchList} watchListActions={watchListActions} setWatchListData={setWatchListData} />} />
-          <Route path="/watched" element={<WatchedPage watchedList={watchedList} watchListActions={watchListActions} setWatchListData={setWatchListData} />} />
+          <Route path="/towatch" element={<ToWatchPage toWatchList={toWatchList} watchListActions={watchListActions} />} />
+          <Route path="/watched" element={<WatchedPage watchedList={watchedList} watchListActions={watchListActions} />} />
         </Routes>
       </Router>
     </div>

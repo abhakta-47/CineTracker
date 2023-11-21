@@ -11,10 +11,9 @@ const ITEMS_PER_PAGE = 10; // Adjust this based on your requirements
 
 interface SearchPageProps {
   watchListActions: WatchListActions;
-  setWatchListData: React.Dispatch<React.SetStateAction<WatchListData>>;
 }
 
-const SearchPage: React.FC<SearchPageProps> = ({ watchListActions, setWatchListData }) => {
+const SearchPage: React.FC<SearchPageProps> = ({ watchListActions }) => {
   const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchResults, setSearchResults] = useState<MediaSearchResult[]>([]);
@@ -65,7 +64,7 @@ const SearchPage: React.FC<SearchPageProps> = ({ watchListActions, setWatchListD
       );
 
     return (<>
-      <TileGrid searchResults={searchResults} watchListActions={watchListActions} setWatchListData={setWatchListData} />
+      <TileGrid searchResults={searchResults} watchListActions={watchListActions} />
       <Pagination
         totalPages={Math.ceil(totalResults / ITEMS_PER_PAGE)}
         currentPage={currentPage}

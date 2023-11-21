@@ -14,14 +14,19 @@ A Movie List App is a web application built with ReactJS (NextJS) and TypeScript
 - [ ] GDrive api
    - [x] get GDrive API keys and basic flow
    - [x] login with google, permissions page
-   - [ ] save token and all
    - [x] add to watch list
    - [x] add to watched list
    - [x] persist state
    - [ ] conflict resolution by time ( some id in both watched towatch keep the newer)
+   - &#x2612; save token and all (not feasible in client only model)
 - [x] towatch watched page
+- [ ] ac ui/ux
+   - [x] AC (login, logout) component
+   - [ ] refresh token prompt
+   - [ ] explain why user have to login again and again
+- [x] watched, towatch state,storage,drive,sync bugs fix
 - [ ] Details Page
-- [ ] Store (not needed)
+- &#x2612; Store (not needed)
 
 ## Table of Contents
 

@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { Tooltip } from 'react-tooltip';
 
 import { OMDBMedia, MediaDetails } from "../utils/omdbApi"
-import watchListService from '../services/storage';
 
 
 const TileLoader = () => {
@@ -16,14 +15,10 @@ const TileLoader = () => {
 
 interface TileProps {
     searchResult: MediaSearchResult;
-    addToWatchList: (id: string) => void;
-    addWatchedList: (id: string) => void;
-    removeToWatchList: (id: string) => void;
-    removeWatchedList: (id: string) => void;
-    setWatchListData: React.Dispatch<React.SetStateAction<WatchListData>>;
+    watchListActions: WatchListActions;
 }
 
-const Tile: React.FC<TileProps> = ({ searchResult, addToWatchList, addWatchedList, removeToWatchList, removeWatchedList, setWatchListData }) => {
+const Tile: React.FC<TileProps> = ({ searchResult, watchListActions }) => {
     const [media, setMedia] = useState<OMDBMedia | undefined>();
 
     useEffect(() => {
@@ -39,25 +34,20 @@ const Tile: React.FC<TileProps> = ({ searchResult, addToWatchList, addWatchedLis
     const handleAddToWatch = (e: React.MouseEvent<HTMLButtonElement>) => {
         // e.preventDefault();
         console.log("add to watchlist");
-        removeWatchedList(searchResult.id);
-        addToWatchList(searchResult.id);
-        setWatchListData(watchListService.getWatchLists());
+        watchListActions.addToWatchList(searchResult.id);
     };
     const handleAddWatched = (e: React.MouseEvent<HTMLButtonElement>) => {
         // e.preventDefault();
         console.log("add to watchedlist");
-        removeToWatchList(searchResult.id);
-        addWatchedList(searchResult.id);
-        setWatchListData(watchListService.getWatchLists());
+        watchListActions.addWatchedList(searchResult.id);
     };
     const handleRemove = (e: React.MouseEvent<HTMLButtonElement>) => {
         // e.preventDefault();
         const path = window.location.pathname;
         if ('/watched' === path)
-            removeWatchedList(searchResult.id);
-        else
-            removeToWatchList(searchResult.id);
-        setWatchListData(watchListService.getWatchLists());
+            watchListActions.removeWatchedList(searchResult.id);
+        else if ('/towatch' === path)
+            watchListActions.removeToWatchList(searchResult.id);
     };
 
     return (
