@@ -1,3 +1,5 @@
+// import { GoogleApi } from '@types/gapi';
+
 declare global {
   interface Window {
     gapi: any;
@@ -19,67 +21,60 @@ class GDriveService {
   private DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
   private SCOPES = 'https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file';
   private tokenClient: any;
+  private accessToken: string = '';
   public isLoggedIn: boolean = false;
 
   constructor() {
     console.log('gdrive service constructor');
-    window.onload = () => this.init();
+    window.onload = () => {
+      try {
+        this.init();
+      }
+      catch (err) {
+        console.log(err);
+      }
+    }
   }
 
   private async init() {
-    try {
-      window.gapi.load('client', async () => {
-        await window.gapi.client.init({
-          apiKey: this.API_KEY,
-          discoveryDocs: [this.DISCOVERY_DOC],
-        });
-
-        this.tokenClient = await window.google.accounts.oauth2.initTokenClient({
-          client_id: this.CLIENT_ID,
-          scope: this.SCOPES,
-          callback: '',
-          // access
-        });
-        console.log('gsi loaded');
-
-        const storedToken = await localStorage.getItem('accessToken');
-        if (storedToken) {
-          await window.gapi.client.setToken({ access_token: storedToken });
-          this.isLoggedIn = true;
-          this.triggerAuthCompleteEvent();
-          console.log('token set from local storage');
-        }
-
-        console.log('gapi loaded');
-
-        console.log('gapi loaded event');
-        const gapiLoaded = new Event('gapiLoaded');
-        document.dispatchEvent(gapiLoaded);
+    window.gapi.load('client', async () => {
+      await window.gapi.client.init({
+        apiKey: this.API_KEY,
+        discoveryDocs: [this.DISCOVERY_DOC],
       });
 
-    }
-    catch (err) {
-      console.log(err);
-    }
+      this.tokenClient = await window.google.accounts.oauth2.initTokenClient({
+        client_id: this.CLIENT_ID,
+        scope: this.SCOPES,
+        prompt: '',
+        callback: (resp: any) => {
+          if (resp.error !== undefined) {
+            throw new Error(`Authentication error: ${resp.error}`);
+          }
+          console.log('logged in');
+          this.isLoggedIn = true;
+          this.accessToken = resp.access_token;
+          this.triggerAuthCompleteEvent();
+        }
+      });
 
+      console.log('gapi gsi loaded');
+
+      const gapiLoaded = new Event('gapiLoaded');
+      document.dispatchEvent(gapiLoaded);
+    });
   }
 
   public authLogin = async () => {
-    this.tokenClient.callback = async (resp: any) => {
-      if (resp.error !== undefined) {
-        throw new Error(`Authentication error: ${resp.error}`);
-      }
-      console.log('token', resp.access_token);
-      this.isLoggedIn = true;
-      localStorage.setItem('accessToken', resp.access_token);
-      this.triggerAuthCompleteEvent();
-    };
+    this.tokenClient.requestAccessToken();
+  };
 
-    if (window.gapi.client.getToken() === null) {
-      this.tokenClient.requestAccessToken({ prompt: 'consent' });
-    } else {
-      this.tokenClient.requestAccessToken({ prompt: '' });
-    }
+  public authLogout = async () => {
+    this.isLoggedIn = false;
+    window.google.accounts.oauth2.revoke(this.accessToken, (done: any) => {
+      console.log('logged out');
+    });
+
   };
 
   private async createJSON(fileName: string, jsonObject: ListItem, parentFolder: string): Promise<string> {
