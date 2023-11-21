@@ -53,8 +53,9 @@ class GDriveService {
       const response = await service.files.create({
         resource: fileMetadata,
       });
+      console.log(response);
       // TODO return file id
-      return response;
+      return response.result.id;
     } catch (err: any) {
       console.error('create file error', err);
       throw new Error(`Error creating file: ${err.message}`);

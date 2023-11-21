@@ -9,7 +9,11 @@ import { SearchMedia, MediaSearchResult, MediaSearchResults } from '../utils/omd
 
 const ITEMS_PER_PAGE = 10; // Adjust this based on your requirements
 
-const SearchPage = () => {
+interface SearchPageProps {
+  watchListActions: WatchListActions;
+}
+
+const SearchPage: React.FC<SearchPageProps> = ({ watchListActions: watchListActions }) => {
   const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchResults, setSearchResults] = useState<MediaSearchResult[]>([]);
@@ -60,7 +64,7 @@ const SearchPage = () => {
       );
 
     return (<>
-      <TileGrid searchResults={searchResults} />
+      <TileGrid searchResults={searchResults} watchListActions={watchListActions} />
       <Pagination
         totalPages={Math.ceil(totalResults / ITEMS_PER_PAGE)}
         currentPage={currentPage}
