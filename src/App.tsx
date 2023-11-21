@@ -50,7 +50,7 @@ const App: React.FC = () => {
   };
 
 
-  document.addEventListener('authComplete', () => {
+  document.addEventListener('authEvent', () => {
     watchListService.postAuth();
   });
 

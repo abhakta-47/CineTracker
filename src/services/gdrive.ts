@@ -6,7 +6,15 @@ declare global {
     google: any;
     tokenClient: any;
   }
+
+  interface UserObject {
+    name: string;
+    email: string;
+    imageUrl: string;
+  }
 }
+
+const gapi: any = window.gapi;
 
 interface ListItem {
   imdbID: string;
@@ -19,9 +27,11 @@ class GDriveService {
   private CLIENT_ID = process.env.REACT_APP_GOOGLE_DRIVE_CLIENT_ID;
   private API_KEY = process.env.REACT_APP_GOOGLE_DRIVE_API_KEY;
   private DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
-  private SCOPES = 'https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file';
+  private SCOPES = 'https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
+  // private SCOPES = 'https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
   private tokenClient: any;
   private accessToken: string = '';
+  private userObj: UserObject | null = null;
   public isLoggedIn: boolean = false;
 
   constructor() {
@@ -54,7 +64,13 @@ class GDriveService {
           console.log('logged in');
           this.isLoggedIn = true;
           this.accessToken = resp.access_token;
-          this.triggerAuthCompleteEvent();
+          this.getUser().then((userObj) => {
+            this.userObj = userObj;
+            console.log('got userObj');
+            const userObjEvent = new CustomEvent('userObj', { detail: userObj });
+            document.dispatchEvent(userObjEvent);
+          });
+          this.triggerAuthEvent();
         }
       });
 
@@ -73,9 +89,23 @@ class GDriveService {
     this.isLoggedIn = false;
     window.google.accounts.oauth2.revoke(this.accessToken, (done: any) => {
       console.log('logged out');
+      this.triggerAuthEvent();
     });
 
   };
+
+  private async getUser(): Promise<UserObject | null> {
+    try {
+      const response = await gapi.client.request({
+        path: 'https://www.googleapis.com/oauth2/v2/userinfo',
+      });
+      const { name, email, picture } = response.result;
+      return { name, email, imageUrl: picture };
+    } catch (error: any) {
+      console.error('Error getting user info', error.message);
+      return null;
+    }
+  }
 
   private async createJSON(fileName: string, jsonObject: ListItem, parentFolder: string): Promise<string> {
     const fileMetadata = {
@@ -167,10 +197,10 @@ class GDriveService {
     return await this.createJSON(imdbID, jsonObject, 'watched-list');
   }
 
-  private triggerAuthCompleteEvent() {
+  private triggerAuthEvent() {
     // Create and dispatch a custom event
-    const authCompleteEvent = new Event('authComplete');
-    document.dispatchEvent(authCompleteEvent);
+    const authEvent = new Event('authEvent');
+    document.dispatchEvent(authEvent);
   }
 }
 
