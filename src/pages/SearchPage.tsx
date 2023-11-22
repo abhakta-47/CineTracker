@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import TileGrid from '../components/TileGrid';
 import Pagination from '../components/Pagination';
 import SpinningLoader from '../components/SpinningLoader';
+import SearchBox from '../components/SearchBox';
 
 import { SearchMedia, MediaSearchResults } from '../utils/omdbApi';
 
@@ -65,17 +66,22 @@ const SearchPage: React.FC<SearchPageProps> = ({ watchListActions }) => {
 
     return (<>
       <TileGrid searchResults={searchResults} watchListActions={watchListActions} />
-      <Pagination
-        totalPages={Math.ceil(totalResults / ITEMS_PER_PAGE)}
-        currentPage={currentPage}
-        baseLink={`/search?key=${searchQuery}`}
-      />
+      <div className="self-center">
+        <Pagination
+          totalPages={Math.ceil(totalResults / ITEMS_PER_PAGE)}
+          currentPage={currentPage}
+          baseLink={`/search?key=${searchQuery}`}
+        />
+      </div>
     </>);
 
   };
 
   return (
-    <div className='flex items-center justify-center flex-col'>
+    <div className='flex items-center justify-center flex-col gap-2 p-4'>
+      <div className="mb-4">
+        < SearchBox />
+      </div>
       {renderUi()}
     </div>
   );

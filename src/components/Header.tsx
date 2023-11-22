@@ -1,8 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-
-import SearchBox from '../components/SearchBox';
 import Account from '../components/Account';
 
 
@@ -24,9 +22,6 @@ const Header = () => {
                     Watched
                 </p>
             </Link>
-            <div className="flex">
-                < SearchBox />
-            </div>
 
             <Account />
 
